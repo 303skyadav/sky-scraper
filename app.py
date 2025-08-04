@@ -147,8 +147,18 @@ if btn_auto:
 
             full_url = f"{url_base}{sep}{p}"
             # Fetch HTML over HTTP instead of using Selenium
-           html = fetch_page(full_url)
+            html = fetch_page(full_url)
 
+            # DEBUG: optionally inspect HTML on page 1
+            if p == 1:
+                st.sidebar.text_area(
+                    "Page 1 HTML snippet",
+                    html[:2000],
+                    height=300
+                )
+
+            # Parse the fetched HTML
+            batch = scrape_html(html, p)
             if not batch:
                 status.info(f"No items found on page {p} – ending scrape.")
                 break
