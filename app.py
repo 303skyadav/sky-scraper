@@ -147,8 +147,7 @@ if btn_auto:
 
             full_url = f"{url_base}{sep}{p}"
             # Fetch HTML over HTTP instead of using Selenium
-            html  = fetch_page(full_url)
-            batch = scrape_html(html, p)
+           html = fetch_page(full_url)
 
             if not batch:
                 status.info(f"No items found on page {p} – ending scrape.")
