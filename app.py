@@ -32,6 +32,40 @@ def fetch_page(url: str) -> str:
     response.raise_for_status()  # Raise an error on bad status
     return response.text
 
+# ── PART 3: USER INPUTS & SIDEBAR CONTROLS ───────────────────────────────────
+st.sidebar.header("How to Use")
+st.sidebar.markdown("""
+1. Enter a Myntra category URL & number of pages to scrape.  
+2. Click **Auto Scrape** to begin extraction.  
+3. Apply filters in the sidebar.  
+4. Explore your dashboard below.
+""")
+
+# Discount slider and Ads filter
+disc_min, disc_max = st.sidebar.slider(
+    "Discount Range (%)", 0, 100, (0, 100)
+)
+ads_filter = st.sidebar.selectbox(
+    "Ads Filter", ["All", "Only Ads", "Only Non-Ads"]
+)
+
+# Main controls: URL input, page count, buttons
+_, col_url, col_pages, _ = st.columns([1, 4, 2, 1])
+url_base = col_url.text_input(
+    "Base URL", "https://www.myntra.com/women-jewellery"
+)
+pages_to_scrape = col_pages.number_input(
+    "Pages to Scrape", min_value=1, value=5, step=1,
+    help="Set to 0 to run until no more items appear"
+)
+
+_, col_auto, col_stop, _ = st.columns([1, 2, 2, 1])
+btn_auto = col_auto.button("🤖 Auto Scrape")
+btn_stop = col_stop.button("🛑 Stop")
+
+# Placeholder for status messages
+status = st.empty()
+
 # ── PART 4: SCRAPING & SESSION-STATE MANAGEMENT ────────────────────────────
 # Initialize session-state containers if they don't exist
 if "data" not in st.session_state:
