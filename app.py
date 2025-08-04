@@ -32,6 +32,60 @@ def fetch_page(url: str) -> str:
     response.raise_for_status()  # Raise an error on bad status
     return response.text
 
+# ── PART 2.A: HELPER FUNCTIONS ─────────────────────────────────────────────
+def scrape_html(html: str, page_no: int) -> list[dict]:
+    """
+    Parse Myntra page HTML and return a list of product dicts.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    batch = []
+
+    for placement_idx, item in enumerate(soup.select("li.product-base"), start=1):
+        a = item.select_one("a[href]")
+        if not a:
+            continue
+
+        # Build absolute URL and dedupe
+        href = a["href"].split("?")[0]
+        url  = "https://www.myntra.com" + (href if href.startswith("/") else "/" + href)
+        if url in st.session_state.seen:
+            continue
+        st.session_state.seen.add(url)
+
+        # Extract fields
+        txt = lambda sel: sel.text.strip() if sel else ""
+        subcat = urlparse(url).path.strip("/").split("/")[0]
+        wm = item.select_one(".product-waterMark")
+
+        batch.append({
+            "Page Number":     page_no,
+            "Placement Index": placement_idx,
+            "Product":         txt(item.select_one(".product-product")),
+            "Company":         txt(item.select_one(".product-brand")),
+            "Review Count":    txt(item.select_one(".product-ratingsCount")).replace("|",""),
+            "Rating":          txt(item.select_one(".product-ratingsContainer span")),
+            "Ads":             "Yes" if wm and wm.text.strip().upper() == "AD" else "No",
+            "Selling Price":   txt(item.select_one(".product-discountedPrice") or item.select_one(".product-price")),
+            "MRP":             txt(item.select_one(".product-strike")) or txt(item.select_one(".product-discountPercentage")) or "",
+            "Raw Discount":    txt(item.select_one(".product-discountPercentage")) or "0% OFF",
+            "Sub-category":    subcat,
+            "Product URL":     url
+        })
+
+    return batch
+
+
+def hyperlink_products(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Turn the ‘Product’ column into clickable links using the ‘Product URL’.
+    """
+    df = df.copy()
+    df["Product"] = df.apply(
+        lambda r: f'<a href="{r["Product URL"]}" target="_blank">{r["Product"]}</a>',
+        axis=1
+    )
+    return df
+
 # ── PART 3: USER INPUTS & SIDEBAR CONTROLS ───────────────────────────────────
 st.sidebar.header("How to Use")
 st.sidebar.markdown("""
