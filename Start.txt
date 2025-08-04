@@ -1,0 +1,29 @@
+Start
+
+cd C:\MyApps
+streamlit run webscraper.py
+
+
+
+cd C:\MyApps
+streamlit run stockvision_app.py
+
+
+cd C:\MyApps
+streamlit run webscraper_V.2.0.py
+
+cd C:\MyApps
+streamlit run webscraper_V.2.1.py
+
+cd C:\MyApps
+streamlit run webscraper_V.2.2.py
+
+cd C:\MyApps
+streamlit run webscraper_V.3.0.py
+
+
+cd C:\MyApps
+streamlit run webscraper_V.3.0_Secure.py
+
+cd C:\MyApps
+streamlit run app.py

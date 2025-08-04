@@ -1,0 +1,9 @@
+streamlit
+streamlit-authenticator
+PyYAML
+beautifulsoup4
+selenium
+webdriver-manager
+pandas
+numpy
+matplotlib

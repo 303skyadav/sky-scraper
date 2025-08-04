@@ -1,0 +1,15 @@
+credentials:
+  usernames:
+    alice:
+      name: Alice
+      email: alice@example.com
+      password: !secret alice_pw
+
+cookie:
+  name: myapp_cookie
+  key: !secret cookie_key
+  expiry_days: 1
+
+preauthorized:
+  emails:
+    - alice@example.com
